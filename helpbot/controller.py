@@ -34,6 +34,9 @@ def main():
     first_sentence = "Hello {}, I took your question to the admins.".format(name)
     second_sentence = "'{}' is a really nice question !".format(question)
 
+    requests.post('https://hooks.slack.com/services/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',
+                  data=json.dumps({"text": "A new question from {} : {}".format(name, question)}))
+
     code, response = 200, {"text": first_sentence + second_sentence}
 
     return jsonify(response), code
