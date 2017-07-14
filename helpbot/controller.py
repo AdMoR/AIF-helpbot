@@ -27,13 +27,15 @@ def format_response(response, status_code=200):
     return response
 
 
-@api_v1.route("/helpbot", methods=['POST', 'GET'])
+@api_v1.route("/question", methods=['POST', 'GET'])
 def main():
 
     # Get the data
     question = request.form.get('text')
     name = request.form.get('user_name')
     ticket = hashlib.md5(name + question + config.get("salt")).hexdigest()
+
+    print(request.form.__dict__)
 
     r.set(ticket, cPickle.dumps((name, question)))
 
@@ -72,7 +74,30 @@ def answer():
     else:
         raise Exception
 
-    first_sentence = "Hello everyone,\n {} answer the question of {}.\n".format(name, question_name)
+    first_sentence = "Hello everyone,\n {} answer the question of @{}.\n".format(name, question_name)
+    second_sentence = "Here is the question : {}\n".format(question)
+    third_sentence = "Here is the answer : {}\n".format(answer)
+
+    answer_room_url = config.get("answer_post_url")
+    requests.post(answer_room_url,
+                  data=json.dumps({"text": first_sentence + second_sentence + third_sentence}))
+
+    code, response = 200, {"text": first_sentence + second_sentence + third_sentence}
+
+    return jsonify(response), code
+
+
+@api_v1.route("/send_document", methods=['POST', 'GET'])
+def save_document():
+
+    req = request.form.get('text')
+    name = request.form.get('user_name')
+
+    doc_url = req
+
+
+
+    first_sentence = "Hello everyone,\n {} answer the question of @{}.\n".format(name, question_name)
     second_sentence = "Here is the question : {}\n".format(question)
     third_sentence = "Here is the answer : {}\n".format(answer)
 
