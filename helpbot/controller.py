@@ -12,7 +12,7 @@ import hashlib
 import requests
 from . import app
 from redis import StrictRedis
-import cPickle
+import pickle
 
 api_v1 = Blueprint('helpbot', __name__)
 r = StrictRedis()
