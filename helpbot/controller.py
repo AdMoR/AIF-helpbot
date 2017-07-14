@@ -33,11 +33,12 @@ def main():
     # Get the data
     question = request.form.get('text')
     name = request.form.get('user_name')
-    ticket = hashlib.md5(name + question + config.get("salt")).hexdigest()
+    ticket = hashlib.md5(name.encode('utf-8') + question.encode('utf-8') +\
+                         config.get("salt").encode('utf-8')).hexdigest()
 
     print(request.form.__dict__)
 
-    r.set(ticket, cPickle.dumps((name, question)))
+    r.set(ticket, pickle.dumps((name, question)))
 
     first_sentence = "Hello {},\n I took your question to the admins.\n".format(name)
     second_sentence = "Here is you ticket number {}.\n An admin will answer your question soon.".format(ticket)
@@ -70,7 +71,7 @@ def answer():
 
     data = r.get(ticket)
     if data is not None:
-        question_name, question = cPickle.loads(data)
+        question_name, question = pickle.loads(data)
     else:
         raise Exception
 
