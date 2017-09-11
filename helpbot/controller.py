@@ -75,9 +75,9 @@ def answer():
     else:
         raise Exception
 
-    first_sentence = "Hello everyone,\n {} answer the question of @{}.\n".format(name, question_name)
-    second_sentence = "Here is the question : {}\n".format(question)
-    third_sentence = "Here is the answer : {}\n".format(answer)
+    first_sentence = "Bonjour à tous,\n {} a répondu à la question de @{}.\n".format(name, question_name)
+    second_sentence = "La question : {}\n".format(question)
+    third_sentence = "Et voici la réponse: {}\n".format(answer)
 
     answer_room_url = config.get("answer_post_url")
     requests.post(answer_room_url,
@@ -96,11 +96,9 @@ def save_document():
 
     doc_url = req
 
-
-
-    first_sentence = "Hello everyone,\n {} answer the question of @{}.\n".format(name, question_name)
-    second_sentence = "Here is the question : {}\n".format(question)
-    third_sentence = "Here is the answer : {}\n".format(answer)
+    first_sentence = "Bonjour à tous,\n {} a répondu à la question de @{}.\n".format(name, question_name)
+    second_sentence = "La question : {}\n".format(question)
+    third_sentence = "Et voici la réponse: {}\n".format(answer)
 
     answer_room_url = config.get("answer_post_url")
     requests.post(answer_room_url,
