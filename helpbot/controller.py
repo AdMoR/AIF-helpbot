@@ -123,3 +123,46 @@ def info():
 
     return jsonify(response), 200
 
+
+@api_v1.route('/warn_user', methods=['POST'])
+def warn_user():
+
+    data = request.get_json(force=True)
+    email = data['email']
+    user = get_user_id_by_email(email)
+    if user is None:
+        code, response = 400, {"status": "Could not found the email"}
+        return jsonify(response), code
+    name = user["real_name"]
+    message = "Salut {}, quelqu'un souhaite rejoindre ton équipe sur le site du challenge. Consulte sa candidature sur http://www.jeunes-industrie-du-futur.fr/view_team"
+    pers_message = message.format(name)
+    resp = requests.post("https://slack.com/api/chat.postMessage",
+                         {'channel': user['id'], 'text': pers_message,
+                          "token": config.get('slack-invite-token')},
+                         headers={"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+    print(resp.text)
+    code, response = 200, {"status": "Success", "message": pers_message}
+    return jsonify(response), code
+
+###################
+#    HELPERS      #
+###################
+
+
+def get_user_list():
+    response = requests.post("https://slack.com/api/users.list", {"token": config.get("slack-invite-token")},
+                             headers={"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+    return response
+
+
+def get_user_id_by_email(email):
+    response = get_user_list()
+    all_members = json.loads(response.text)
+    all_members = all_members['members']
+    print(['email' in member['profile'].keys() for member in all_members])
+    email_user = [member for member in all_members
+                  if ('email' in member['profile'].keys() and member['profile']['email'] == email)]
+    if len(email_user) == 1:
+        return email_user[0]
+    else:
+        return None
