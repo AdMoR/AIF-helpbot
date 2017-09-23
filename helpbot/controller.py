@@ -134,7 +134,7 @@ def warn_user():
         code, response = 400, {"status": "Could not found the email"}
         return jsonify(response), code
     name = user["real_name"]
-    message = "Salut {}, quelqu'un souhaite rejoindre ton équipe sur le site du challenge. Consulte sa candidature sur http://www.jeunes-industrie-du-futur.fr/view_team"
+    message = "Salut {}, quelqu'un souhaite rejoindre ton équipe sur le site du challenge. Consulte sa candidature sur http://www.jeunes-industrie-du-futur.fr/view_team ou http://www.jeunes-industrie-du-futur.fr/login et l'onglet 'voir mon équipe' si tu n'es pas encore loggué"
     pers_message = message.format(name)
     resp = requests.post("https://slack.com/api/chat.postMessage",
                          {'channel': user['id'], 'text': pers_message,
