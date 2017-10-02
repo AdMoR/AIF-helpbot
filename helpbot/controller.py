@@ -144,6 +144,13 @@ def warn_user():
     code, response = 200, {"status": "Success", "message": pers_message}
     return jsonify(response), code
 
+
+@api_v1.route('/user_emails', methods=['GET'])
+def user_emails():
+    code, response = 200, {"status": "Success", "email_list": get_all_user_emails()}
+    return jsonify(response), code
+
+
 ###################
 #    HELPERS      #
 ###################
@@ -166,3 +173,10 @@ def get_user_id_by_email(email):
         return email_user[0]
     else:
         return None
+
+
+def get_all_user_emails():
+    response = get_user_list()
+    email_list = [member['profile']['email'] for member in json.loads(response.text)['members']]
+    return email_list
+
