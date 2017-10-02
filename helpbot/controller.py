@@ -177,6 +177,9 @@ def get_user_id_by_email(email):
 
 def get_all_user_emails():
     response = get_user_list()
-    email_list = [member['profile']['email'] for member in json.loads(response.text)['members']]
+    all_members = json.loads(response.text)
+    all_members = all_members['members']
+    email_list = [member['profile']['email'] for member in all_members
+                  if 'email' in member['profile']]
     return email_list
 
