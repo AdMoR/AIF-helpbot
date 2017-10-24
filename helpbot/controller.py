@@ -142,11 +142,11 @@ def warn_user():
 
     name = user["real_name"]
     pers_message = message.format(name)
-    resp = requests.post("https://slack.com/api/chat.postMessage",
-                         {'channel': user['id'], 'text': pers_message,
-                          "token": config.get('slack-invite-token')},
-                         headers={"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
-    print(resp.text)
+    #resp = requests.post("https://slack.com/api/chat.postMessage",
+    #                     {'channel': user['id'], 'text': pers_message,
+    #                      "token": config.get('slack-invite-token')},
+    #                     headers={"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+    #print(resp.text)
     code, response = 200, {"status": "Success", "message": pers_message}
     return jsonify(response), code
 
@@ -163,8 +163,12 @@ def user_emails():
 
 
 def get_user_list():
-    response = requests.post("https://slack.com/api/users.list", {"token": config.get("slack-invite-token")},
-                             headers={"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+    if r.get('user_list_response') is None:
+        response = requests.post("https://slack.com/api/users.list", {"token": config.get("slack-invite-token")},
+                                 headers={"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+        r.setex('user_list_response', 60 * 60, pickle.dumps(response))
+    else:
+        response = pickle.loads(r.get('user_list_response'))
     return response
 
 
@@ -172,6 +176,7 @@ def get_user_id_by_email(email):
     response = get_user_list()
     all_members = json.loads(response.text)
     all_members = all_members['members']
+    print(all_members)
     print(['email' in member['profile'].keys() for member in all_members])
     email_user = [member for member in all_members
                   if ('email' in member['profile'].keys() and member['profile']['email'] == email)]
